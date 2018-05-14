@@ -1,0 +1,34 @@
+\encoding{UTF-8}
+\name{brexit}
+\alias{brexit}
+\title{Brexit Poll Tracker}
+\description{
+  The data consist of 267 polls conducted before the June 23 2016 EU
+  referendum, which took place in the UK.
+}
+\usage{brexit}
+\format{
+  A dataframe with 272 observations on six variables. The object
+  is of class \code{list}.}
+\references{
+  de Carvalho, M. and Martos, G. (2018). Brexit: Tracking and
+  disentangling the sentiment towards leaving the EU. Submitted.
+}
+\source{
+  Financial Times (FT) Brexit poll tracker.	
+}	
+\examples{
+## Leave--stay plot (de Carvalho and Martos, 2018; Fig. 1)
+data(brexit)
+attach(brexit)
+par(pty = "s")
+plot(leave[(leave > stay)], stay[(leave > stay)],
+     xlim = c(22, 66), ylim = c(22, 66), pch = 16, col = "red",
+     xlab = "Leave", ylab = "Stay")
+points(leave[(stay > leave)], stay[(stay > leave)],
+       pch = 16, col = "blue")
+points(leave[(stay == leave)], stay[(stay == leave)],
+       pch = 24)
+abline(a = 0, b = 1, lwd = 3)
+}
+\keyword{datasets}

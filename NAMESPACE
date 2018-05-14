@@ -1,0 +1,57 @@
+useDynLib(ASSA, .registration = TRUE)
+
+import(stats)
+import(graphics)
+import(grDevices)
+
+export(bssa,
+       bssa.default,
+       bmssa,
+       bmssa.default,       
+       combplot,
+       mtsframe,
+       mtsframe.default,       
+       msst,
+       msst.default,
+       msstc,
+       msstc.default,
+       sst,
+       sst.default
+#       sstc,
+#       sstc.default
+#       itsframe,
+#       itsframe.default
+#       issa,
+#       issa.default
+)
+
+## REGISTER S3 METHODS
+S3method(mtsframe, default)
+S3method(plot, mtsframe)
+
+S3method(msst, default)
+S3method(print, msst)
+S3method(plot, msst)
+# S3method(predict, msst)
+
+S3method(msstc, default)
+
+S3method(sst, default)
+S3method(print, sst)
+S3method(plot, sst)
+
+
+S3method(bssa, default)
+S3method(print, bssa)
+S3method(plot, bssa)
+
+S3method(bmssa, default)
+S3method(print, bmssa)
+S3method(plot, bmssa)
+
+#S3method(itsframe, default)
+#S3method(plot, itsframe)
+
+#S3method(issa, default)
+#S3method(print, issa)
+#S3method(plot, issa)
