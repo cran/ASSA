@@ -9,6 +9,8 @@ export(bssa,
        bmssa,
        bmssa.default,       
        combplot,
+       tsframe,
+       tsframe.default,       
        mtsframe,
        mtsframe.default,       
        msst,
@@ -16,30 +18,37 @@ export(bssa,
        msstc,
        msstc.default,
        sst,
-       sst.default
-#       sstc,
-#       sstc.default
-#       itsframe,
-#       itsframe.default
-#       issa,
-#       issa.default
+       sst.default,
+       predict.default,
+       itsframe,
+       itsframe.default,
+       mitsframe,
+       mitsframe.default,
+       isst,
+       isst.default,
+       misst,
+       misst.default,       
+       predict
 )
 
 ## REGISTER S3 METHODS
+S3method(tsframe, default)
+S3method(plot, tsframe)
+
 S3method(mtsframe, default)
 S3method(plot, mtsframe)
 
 S3method(msst, default)
 S3method(print, msst)
 S3method(plot, msst)
-# S3method(predict, msst)
 
 S3method(msstc, default)
+S3method(print, msstc)
+S3method(plot, msstc)
 
 S3method(sst, default)
 S3method(print, sst)
 S3method(plot, sst)
-
 
 S3method(bssa, default)
 S3method(print, bssa)
@@ -49,9 +58,18 @@ S3method(bmssa, default)
 S3method(print, bmssa)
 S3method(plot, bmssa)
 
-#S3method(itsframe, default)
-#S3method(plot, itsframe)
+S3method(itsframe, default)
+S3method(plot, itsframe)
 
-#S3method(issa, default)
-#S3method(print, issa)
-#S3method(plot, issa)
+S3method(mitsframe, default)
+S3method(plot, mitsframe)
+
+S3method(isst, default)
+S3method(print, isst)
+S3method(plot, isst)
+
+S3method(misst, default)
+S3method(print, misst)
+S3method(plot, misst)
+
+S3method(predict, default)

@@ -12,13 +12,13 @@ msstc(y, l = 'automatic', m = 'automatic', vertical = TRUE)
 }
 \arguments{
   \item{y}{mtsframe object containing data.}
-  \item{l}{{window length; the string \code{'automatic'} sets the
-      default option \cr \code{l = ceiling(y$n + 1) / y$D}.}}
-  \item{m}{number of leading eigentriples; the string \code{'automatic'}
-    yields a vector containing the number of components in each
-    dimension to be used in the trendline estimation. An automatic
+  \item{l}{window length; the string \code{"automatic"} sets
+    the default option \cr \code{l = ceiling((y$n + 1) / y$D)} for
+    \code{vertical} and \code{ceiling(y$D * (y$n + 1) / (y$D + 1))} in the 
+     case of horizontal binding.}
+ \item{m}{vector with the number of leading eigentriples on each dimension. An automatic
     criterion based on the cumulative periodogram of the residuals is
-    provided by default; see details.}
+    provided by default by using the string \code{"automatic"}, see details.}
   \item{vertical}{logical; if \code{TRUE} the trajectory matrices are
     stacked vertically, otherwise the bind is horizontal.}
 }
@@ -38,27 +38,19 @@ msstc(y, l = 'automatic', m = 'automatic', vertical = TRUE)
   periodogram-based criterion.
 }
 \value{
-  \item{trendline}{mtsframe object with trendline estimation from
-    targeted grouping based on a cumulative periodogram criterion (or
-    according to the number of components specified in vector
-    \code{m}).}
-  \item{residuals}{mtsframe object with the residuals from targeted
-    grouping based on a cumulative periodogram criterion (or according
-    to the number of components specified in vector \code{m}).}
-  \item{erc}{list with elementary reconstructed components.}
-  \item{eigen.val}{vector with the singular values of the trajectory
-    matrix.}
-  \item{l}{window length.}
-  \item{selected.components}{vector with number of components selected
-    on each dimension.}
-  \item{selection.criteria}{a vector indicating if the null hypothesis
-    of white noise is rejected along the dimensions (0: not rejected,
-    1: rejected).}
-  \item{rank}{rank of the trajectory matrix.}
+\item{trendline}{mtsframe object with trendline estimation from targeted grouping based on a cumulative periodogram criterion (or according to the number of components specified in vector \code{m}).}
+\item{l}{window length.}
+\item{m}{vector with number of components selected on each dimension.}
+\item{vertical}{flag indicating if the trajectory matrices where stacked vertically.}
+\item{residuals}{mtsframe object with the residuals from targeted grouping based on a cumulative periodogram criterion (or according to the number of components specified in vector \code{m}).}
+\item{svd}{the Singular Value Decomposition of the trajectory matrix.}
+\item{erc}{list with elementary reconstructed components.}
+\item{observations}{mtsframe object with the observations \code{y}.}
 }
 \references{
-  de Carvalho, M. and Martos, G. (2018). Brexit: Tracking and
-  disentangling the sentiment towards leaving the EU. Submitted.
+  de Carvalho, M. and Martos, G. (2020). Brexit: Tracking and
+  disentangling the sentiment towards leaving the EU. \emph{International Journal
+  of Forecasting}, \bold{36}, 1128--1137.
 }
 \seealso{
   See \code{\link{msst}} for a similar routine yielding trendlines for
@@ -66,36 +58,39 @@ msstc(y, l = 'automatic', m = 'automatic', vertical = TRUE)
   estimates to the unit simplex.
 }
 \examples{
-## Brexit data and MSSA on the simplex
+## BREXIT DATA EXAMPLE
 ## (de Carvalho and Martos, 2018; Fig. 1)
 data(brexit)
 attach(brexit)
 y <- mtsframe(date, brexit[, 1:3] / 100)
 fit <- msstc(y)
+# Estimations on the simplex
+rowSums(fit$trendlines$Y)
 
-## Window length and number of components automatically selected on
-## each dimension:
-fit$l
-fit$selected.components 
+# Forecast also in the simplex
+rowSums(predict(fit, p = 5)$forecast)
+
+
+## Window length and components automatically selected
+fit$l; fit$m
 
 ## Plot trendlines (de Carvalho and Martos, 2018; Fig. 1)
 plot(fit, options = list(type = "trendlines"), xlab="time",
      col=c("blue", "red", "black"), lwd = 2, lty = c(1, 2, 3))
 
-## Plot elementary reconstructed components 
-## (de Carvalho and Martos, 2018; Fig. 5)
-plot(fit, options = list(type = "components", ncomp = 1:3))
 
 ## Plot cumulative periodograms (with 95% confidence bands)
 par(mfrow = c(1, 3))
-plot(fit, options = list(type = "cpgrams",
-          series.names = c('Leave','Stay','Undecided')) )
+plot(fit, options = list(type = "cpgrams") )
 
 ## Scree-plot (with 95% confidence bands)
 par(mfrow = c(1, 1))
-plot(fit, options = list(type = "screeplots", ncomp = 1:10),
+plot(fit, options = list(type = "screeplot", ncomp.scree = 1:10),
      type = "b", pch = 20, lwd = 2, main='Scree plot')
 
+## Plot elementary reconstructed components 
+## (de Carvalho and Martos, 2020; Fig. 5)
+plot(fit, options = list(type = "components", ncomp = 1:2))
 }
 \keyword{datasets}
 \author{Gabriel Martos and Miguel de Carvalho}

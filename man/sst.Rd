@@ -11,34 +11,27 @@
 sst(y, l = "automatic", m = "automatic")
 }
 \arguments{
-  \item{y}{mtsframe format data containing data. While \code{y}
-    can include several time series, a more appropriate method for
-    multivariate time series is \code{\link{msst}}.}
+  \item{y}{tsframe format data containing univariate time series data. 
+           More appropriate method for multivariate time series is \code{\link{msst}}. }
   \item{l}{window length; the string \code{"automatic"} automatic sets
     the default option \cr \code{l = ceiling(y$n + 1) / 2}.}
   \item{m}{number of leading eigentriples; the string \code{"automatic"}
-    yields a vector containing the number of components in each
-    dimension to be used in the trendline estimation. An automatic
-    criterion based on the cumulative periodogram of the residuals is
-    provided by default; see details.}}
+    yields an automatic criterion for choosing m based on the cumulative periodogram of the
+    residuals; see details.}}
 \value{
-  \item{trendline}{mtsframe object with trendline estimation from
+  \item{trendline}{tsframe object with trendline estimation from
     targeted grouping based on a cumulative periodogram criterion (or
-    according to the number of components specified in vector
-    \code{m}).}
-  \item{residuals}{mtsframe object with the residuals from targeted
+    according to the number of components specified in \code{m}).}
+ \item{l}{window length.}
+ \item{m}{number of leading eigentriples. An automatic
+    criterion based on the cumulative periodogram of the residuals is
+    provided by default by using the string \code{"automatic"}.}
+ \item{residuals}{tsframe object with the residuals from targeted
     grouping based on a cumulative periodogram criterion (or according
-    to the number of components specified in vector \code{m}).}
-  \item{erc}{list with elementary reconstructed components.}
-  \item{eigen.val}{vector with the singular values of the
-    trajectory matrix.}
-  \item{l}{window length.}
-  \item{selected.components}{vector with components selected on each
-    dimension.}
-  \item{selection.criteria}{a vector indicating if the hypothesis of
-    white noise residual is rejected along the dimensions (0: not
-    rejected, 1: rejected).}
-  \item{rank}{rank of the trajectory matrix.}
+    to the number of components specified in \code{m}).}
+  \item{svd}{Singular value decomposition corresponding to the trajectory matrix.}
+  \item{erc}{elementary reconstructed components.}
+ \item{observations}{tsframe object with the raw data.}
 }
 \details{
   Singular spectrum analysis decompose time series data (\code{y})
@@ -49,8 +42,8 @@ sst(y, l = "automatic", m = "automatic")
   periodogram-based criteria; see de Carvalho and Martos (2018,
   Section 4.1). The \code{plot} method yields the resulting trendlines
   along with the data; \code{options} for the plot method are give by
-  a list including the strings \code{"trendlines"},
-  \code{"components"}, \code{"cpgrams"}, and \code{"screeplots"},
+  a list including the strings \code{"trendline"},
+  \code{"components"}, \code{"cpgram"}, and \code{"screeplot"},
   along with a set of values (\code{ncomp}) indicating the components
   on which these diagnostics are to be depicted (e.g. \code{plot(fit,
   options = list(type = "components", ncomp = 1:3))}.
@@ -61,65 +54,30 @@ sst(y, l = "automatic", m = "automatic")
   for multivariate time series of compositional data.
 } 
 \references{
-  de Carvalho, M. and Martos, G. (2018). Brexit: Tracking and
-  disentangling the sentiment towards leaving the EU. Submitted.
+   de Carvalho, M. and Martos, G. (2020). Brexit: Tracking and
+  disentangling the sentiment towards leaving the EU. \emph{International Journal
+  of Forecasting}, \bold{36}, 1128--1137.
 }
 \examples{
-## SIMULATED DATA EXAMPLES
-## Example 1
-N <- 500
-t <- seq(.01, 5, length = N)
-Y <- t^3 - 9 * t^2 + 23 * t + rnorm(N, 0, 1)
-y <- mtsframe(date = t, Y)
-fit <- sst(y)
-plot(t, Y, col = "gray", ylab = "", 
-     xlab = "time", pch = 16, ylim = c(-10, 31))
-lines(t, t^3 - 9 * t^2 + 23 * t)
-lines(t, fit$trendline$Y, col = "red")
-## Example 2
-N <- 500
-t <- seq(.01, 5, length = N)
-Y <- 10 * sin(3 * t) / t + rnorm(N, 0, 1)
-y <- mtsframe(date = t, Y)
-fit <- msst(y)
-fit$selected.components
-plot(t, Y, col = "gray", ylab = "",
-     xlab = "time", pch = 16, ylim = c(-10, 31))
-lines(t, 10 * sin(3 * t) / t, col = "black")
-lines(t, fit$trendline$Y, col = "red")
-
 ## BREXIT DATA EXAMPLE
-## Note: sst also can deal with several time series as input yet the
-## most appropriate method for multivariate time series is msst
-data(brexit)
-attach(brexit)
-y <- mtsframe(date, brexit[, 1:3] / 100)
-fit <- sst(y)
-plot(fit)
+data(brexit); attach(brexit)
+l <- tsframe(date, brexit[, 1] / 100) # l = leave
+fit <- sst(l); 
+fit$m; fit$l # Number of ERC and parameter l in the model.
+plot(fit, col = "red", lwd = 3, xlab = 'Time', ylab = 'Leave')
+points(date, brexit[, 1] / 100, pch = 20)
 
-## Number of components automatically selected 
-fit$selected.components 
+## Scree-plot
+plot(fit, options = list(type = "screeplot", ncomp = 1:10,
+                         series.names = c('Leave')), type = "b", pch = 20, lwd = 2)
 
-## Chronological plot (de Carvalho and Martos, 2018; Fig. 1)
-plot(fit, options = list(type = "trendlines"), xlab = "time",
-     col = c("blue", "red", "black"), lwd = 2, lty = c(1, 2, 3))
 
-## Plot elementary reconstructed components
-## (de Carvalho and Martos, 2018; Fig. 3)
-plot(fit, options = list(type = "components", serie = 1, ncomp = 1:2))
-plot(fit, options = list(type = "components", serie = 2, ncomp = 1:2))
-plot(fit, options = list(type = "components", serie = 3, ncomp = 1  ))
+## Plot cumulative periodogram
+par(mfrow=c(1,1), mar=c(4,2,1,1))
+plot(fit, options = list(type = "cpgram", series.names = c('Leave')) )
 
-## Plot cumulative periodograms (with 95% confidence bands)
-par(mfrow=c(1,3))
-plot(fit, options = list(type = "cpgrams",
-           series.names = c('Leave','Stay','Undecided')))
-
-## Scree-plot (with 95% confidence bands)
-par(mfrow = c(1, 3))
-plot(fit, options = list(type = "screeplots", ncomp = 1:10,
-          series.names = c('Leave','Stay','Undecided')),
-            type = "b", pch = 20, lwd = 2)
+## Elementary Reconstructed Components (ERC) plot:
+plot(fit, options = list(type = "components", ncomp = 1:2))
 }
 \keyword{datasets}
 \author{Gabriel Martos and Miguel de Carvalho}

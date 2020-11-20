@@ -11,8 +11,9 @@
   A dataframe with 272 observations on six variables. The object
   is of class \code{list}.}
 \references{
-  de Carvalho, M. and Martos, G. (2018). Brexit: Tracking and
-  disentangling the sentiment towards leaving the EU. Submitted.
+  de Carvalho, M. and Martos, G. (2020). Brexit: Tracking and
+  disentangling the sentiment towards leaving the EU. \emph{International Journal
+  of Forecasting}, \bold{36}, 1128--1137.
 }
 \source{
   Financial Times (FT) Brexit poll tracker.	
